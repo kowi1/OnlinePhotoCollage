@@ -1,0 +1,58 @@
+<h1>Upload</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+        <div class="form-group input-group-sm">
+            <label>Border</label>
+        <div class="row">
+            <div class="col-sm-6">
+            <input class="form-control" placeholder="10" formControlName="border">
+            </div>
+            <div class="col-sm-6">
+            <label>px</label>
+            </div> 
+        </div>
+         
+</div>
+        <div class="form-group input-group-lg">
+            <label>RGB Color</label>
+            <input type ="range" min ="0" max="255" class="form-control" step ="1" placeholder="234" formControlName="colorRed">
+        </div>
+        <div class="form-group input-group-lg">
+            <input type="range" min="0" max="255"  class="form-control" step="1" placeholder="234" formControlName="colorGreen">
+        </div>
+        <div class="form-group input-group-lg">
+            <input type="range" min="0" max="255"  class="form-control" step="1" placeholder="234" formControlName="colorBlue">
+        </div>
+        <div class="form-group input-group-lg">
+            <label>Orientation</label>
+            <div class="row">
+              <label class="md-check">
+                <input type="radio" value="vertical" name="gender" formControlName="orientation">
+                Vertical
+              </label>
+          
+              <label class="md-check">
+                <input type="radio" value="horizontal" name="gender" formControlName="orientation">     
+                Horizontal
+              </label>
+            </div>
+          </div>
+        <div class="form-group">
+            <div>
+            <label>Select Multiple Files</label>
+        </div>
+            <input type="file" multiple (change)="uploadFile($event)">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-danger btn-block btn-lg">Upload</button>
+        </div>
+    </form>
+        </div>
+    <div class="col">
+
+    </div>
+</div>
+</div>
