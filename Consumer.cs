@@ -44,25 +44,40 @@ namespace OnlinePhotoCollage
                     {
                         var body = ea.Body.ToArray();
                         var message = Encoding.UTF8.GetString(body);
+                        var outputImageId=message;
+                        
+                        Dictionary<string,string> outputImage = null;
+                        _memoryCache.TryGetValue<Dictionary<string,string>>("outputImage", out outputImage);
+                        if (outputImage == null) outputImage = new Dictionary<string,string>();
+                         
 
-                        Dictionary<List<string>,Tuple<int,int,int,int,string, int>> messages = null;
+                        Dictionary<List<string>,Tuple<int,int,int,int,string,string>> messages = null;
                        // Dictionary<List<string>, int> messag = null;
-                        _memoryCache.TryGetValue<Dictionary<List<string>, Tuple<int,int,int,int,string, int>>>("messages", out messages);
-                        if (messages == null) messages = new Dictionary<List<string>, Tuple<int,int,int,int,string, int>>();
+                        _memoryCache.TryGetValue<Dictionary<List<string>, Tuple<int,int,int,int,string,string>>>("messages", out messages);
+                        if (messages == null) messages = new Dictionary<List<string>, Tuple<int,int,int,int,string,string>>();
 
                         Console.WriteLine(" [x] Received {0}", message);
-                        //Thread.Sleep(3000);
-                        var number = new string(message.SkipWhile(c=>!char.IsDigit(c))
-                         .TakeWhile(c=>char.IsDigit(c))
-                         .ToArray());
-                         Console.WriteLine(messages.ElementAt(Int16.Parse(number)-1).Key[0]);
+                        Thread.Sleep(3000);
+                       // var messageCount = new string(message.SkipWhile(c=>!char.IsDigit(c)).TakeWhile(c=>char.IsDigit(c)).ToArray());
+                       var KeyofIndex= messages.Where(kvp => kvp.Value.Item6 == outputImageId).FirstOrDefault();
+                        var messageDictIndex =  Array.IndexOf(messages.Keys.ToArray(), KeyofIndex.Key);
+
                         Tasks _task=new Tasks();
-                          _task.Resize(messages.ElementAt(Int16.Parse(number)-1).Key[0],Int16.Parse(number)-1);
-                        _task.Stitch(messages.ElementAt(Int16.Parse(number)-1).Key,Int16.Parse(number)-1,messages.ElementAt(Int16.Parse(number)-1).Value);
-                       // messag.Add(messages.ElementAt(Int16.Parse(number)).Key,messages.ElementAt(Int16.Parse(number)).Value);
-                       // messages.Remove(messages.ElementAt(Int16.Parse(number)-1).Key);
-                        _memoryCache.Set<Dictionary<List<string>, Tuple<int,int,int,int,string, int>>>("messages", messages);
+
+                        // Get imagelist and stitching options from messages stored in shared memory cache
+                        // Both the consumer and producer have access to this memory cache.
+                        
+                        List<string> imageList = messages.ElementAt(messageDictIndex).Key;
+                        Tuple<int,int,int,int,string,string> stitchSettings = messages.ElementAt(messageDictIndex).Value;
+
+                       // _task.Resize(messages.ElementAt(Int16.Parse(number)-1).Key[0],Int16.Parse(number)-1);
+                        var ouputFilePath =_task.Stitch(imageList,message,stitchSettings);
+                        outputImage[outputImageId]=ouputFilePath;
+
+                         messages.Remove(imageList);
+                        _memoryCache.Set<Dictionary<List<string>, Tuple<int,int,int,int,string, string>>>("messages", messages);
                         _channel.BasicAck(ea.DeliveryTag, false);
+
                     };
 
                     _channel.BasicConsume(queue: "counter",

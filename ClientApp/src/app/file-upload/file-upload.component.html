@@ -30,12 +30,12 @@
             <label>Orientation</label>
             <div class="row">
               <label class="md-check">
-                <input type="radio" value="vertical" name="gender" formControlName="orientation">
+                <input type="radio" value="vertical" name="orientation" formControlName="orientation">
                 Vertical
               </label>
           
               <label class="md-check">
-                <input type="radio" value="horizontal" name="gender" formControlName="orientation">     
+                <input type="radio" value="horizontal" name="orientation" formControlName="orientation">     
                 Horizontal
               </label>
             </div>
@@ -52,7 +52,11 @@
     </form>
         </div>
     <div class="col">
-
+        <img src={{uniqueid}}/>
+        <a download="OnlinePhotoCollage" target="_blank" href={{uniqueid}}>
+            Click here to download image
+          </a>
+          
     </div>
 </div>
 </div>

@@ -21,10 +21,10 @@ namespace OnlinePhotoCollage
             _memoryCache = memoryCache;
         }
 
-        public bool PushMessageToQ(List<String> images,int border,int colorRed,int colorGreen,int colorBlue,String orientation)
+        public string PushMessageToQ(List<String> images,int border,int colorRed,int colorGreen,int colorBlue,String orientation)
         {
             try
-            {
+            {   var uniqueId=Guid.NewGuid().ToString();
                 var factory = new ConnectionFactory() { HostName = "localhost" };
                 using (var connection = factory.CreateConnection())
                 {
@@ -36,13 +36,22 @@ namespace OnlinePhotoCollage
                                      autoDelete: false,
                                      arguments: null);
 
-                        var message = $"Message {_messageCount++}";
+                        var message = $"{uniqueId}";
+                        
 
-                        Dictionary<List<string>,Tuple<int,int,int,int, string, int>> messages = null;
-                        _memoryCache.TryGetValue<Dictionary<List<string>,Tuple<int,int,int,int,string, int>>>("messages", out messages);
-                        if (messages == null) messages = new Dictionary<List<string>,Tuple<int,int,int,int,string, int>>();
-                        messages.Add(images, Tuple.Create(border,colorRed,colorGreen,colorBlue,orientation,_messageCount));
-                        _memoryCache.Set<Dictionary<List<string>, Tuple<int,int,int,int,string, int>>>("messages", messages);
+                        Dictionary<List<string>,Tuple<int,int,int,int, string, string>> messages = null;
+                        Dictionary<string,string> outputImage = null;
+
+                        _memoryCache.TryGetValue<Dictionary<string,string>>("outputImage", out outputImage);
+                         if (outputImage == null) outputImage = new Dictionary<string,string>();
+                         
+                         outputImage.Add(uniqueId,"");
+                         _memoryCache.Set<Dictionary<string,string>>("outputImage",outputImage);
+
+                        _memoryCache.TryGetValue<Dictionary<List<string>,Tuple<int,int,int,int,string, string>>>("messages", out messages);
+                        if (messages == null) messages = new Dictionary<List<string>,Tuple<int,int,int,int,string, string>>();
+                        messages.Add(images, Tuple.Create(border,colorRed,colorGreen,colorBlue,orientation,uniqueId));
+                        _memoryCache.Set<Dictionary<List<string>, Tuple<int,int,int,int,string,string>>>("messages", messages);
 
                         var messageBody = Encoding.UTF8.GetBytes(message);
 
@@ -50,12 +59,12 @@ namespace OnlinePhotoCollage
                     }
                 }
 
-                return true;
+                return uniqueId;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"{ex.Message} | {ex.StackTrace}");
-                return false;
+                return null;
             }
         }
     }

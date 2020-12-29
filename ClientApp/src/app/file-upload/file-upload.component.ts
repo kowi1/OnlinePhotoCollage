@@ -1,6 +1,9 @@
 import { Component,Inject } from '@angular/core';
 import { FormBuilder, FormGroup,FormControl } from "@angular/forms";
 import { HttpClient ,HttpHeaders} from '@angular/common/http';
+import { of } from "rxjs";
+import { delay,concatMap } from "rxjs/operators";
+
 
 
 @Component({
@@ -12,6 +15,7 @@ export class FileUploadComponent  {
   form: FormGroup;
   public baseUrls:string;
   size:number;
+  uniqueid:string;
   
 
   constructor(
@@ -57,10 +61,22 @@ export class FileUploadComponent  {
     }
     
 
-
-    this.http.post(this.baseUrls + 'ImageUpload/uploads', formData).subscribe(
-      (response) => console.log(response),
-      (error) => console.log(error)
+    
+    this.http.post(this.baseUrls + 'ImageUpload/uploads', formData)
+    .pipe(concatMap(item => of(item).pipe(delay(8000))))
+    .subscribe(
+     (response) => {
+       console.log(response);
+       
+       let resStr = JSON.stringify(response);
+       let resJSON = JSON.parse(resStr);
+       this.uniqueid="/ImageUpload/img?unique_id="+response.toString();
+       console.log(resJSON.text);
+      },
+      
+        (error) => {console.log(error);
+          
+      }
     )
   }
 
