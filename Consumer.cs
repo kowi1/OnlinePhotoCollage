@@ -13,7 +13,7 @@ namespace OnlinePhotoCollage
     public class Consumer
     {
         private readonly IMemoryCache _memoryCache;
-        private static string url= "amqps://xsygtdlq:7wIOi4AVRbvfYSbM99ePLZRvabRh_xo3@owl.rmq.cloudamqp.com/xsygtdlq" ;
+        private static string url= "amqps" ;
         ConnectionFactory _factory { get; set; }
         IConnection _connection { get; set; }
         IModel _channel { get; set; }
