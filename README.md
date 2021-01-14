@@ -13,3 +13,5 @@ These are the languages, frameworks, libraries, and tools used for this project:
     For task queue: RabbitMQ.Client & RabbitMQ 
     For image processing: SixLabors.ImageSharp
     Front-end: Angular 8.2.12.
+
+https://online-photo-collage.herokuapp.com/
