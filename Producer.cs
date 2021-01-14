@@ -15,7 +15,7 @@ namespace OnlinePhotoCollage
     {
         private int _messageCount = 1;
         private readonly IMemoryCache _memoryCache;
-        private static string url= "amqps://xsygtdlq:7wIOi4AVRbvfYSbM99ePLZRvabRh_xo3@owl.rmq.cloudamqp.com/xsygtdlq" ;
+        private static string url= "amqp" ;
         public Producer(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
