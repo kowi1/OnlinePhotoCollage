@@ -47,7 +47,7 @@ namespace OnlinePhotoCollage.Controllers
             {
             
             var fileName = Path.GetFileName(file.FileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"uploads", fileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", fileName);
 
             imageNameList.Add(fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -55,7 +55,10 @@ namespace OnlinePhotoCollage.Controllers
                 await file.CopyToAsync(stream);
              }
             }
+        
              var unique_id =_producer.PushMessageToQ(imageNameList,Int16.Parse(formdata["border"]),Int16.Parse(formdata["colorRed"]),Int16.Parse(formdata["colorGreen"]),Int16.Parse(formdata["colorBlue"]),formdata["orientation"]);
+          
+
             return JsonConvert.SerializeObject(unique_id);
         }
         [HttpGet("[action]")]

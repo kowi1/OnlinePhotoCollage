@@ -24,7 +24,7 @@ namespace OnlinePhotoCollage
             services.AddControllersWithViews();
             services.AddMemoryCache();
             services.AddSingleton<Producer>();
-             services.AddSingleton<Consumer>();
+            services.AddSingleton<Consumer>();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

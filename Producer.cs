@@ -15,7 +15,7 @@ namespace OnlinePhotoCollage
     {
         private int _messageCount = 1;
         private readonly IMemoryCache _memoryCache;
-
+        private static string url= "amqps://xsygtdlq:7wIOi4AVRbvfYSbM99ePLZRvabRh_xo3@owl.rmq.cloudamqp.com/xsygtdlq" ;
         public Producer(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
@@ -25,7 +25,9 @@ namespace OnlinePhotoCollage
         {
             try
             {   var uniqueId=Guid.NewGuid().ToString();
-                var factory = new ConnectionFactory() { HostName = "localhost" };
+               // var factory = new ConnectionFactory() { HostName = "localhost"};
+                var factory= new ConnectionFactory();
+                factory.Uri = new Uri(url.Replace("amqp://", "amqps://"));
                 using (var connection = factory.CreateConnection())
                 {
                     using (var channel = connection.CreateModel())
@@ -54,6 +56,7 @@ namespace OnlinePhotoCollage
                         _memoryCache.Set<Dictionary<List<string>, Tuple<int,int,int,int,string,string>>>("messages", messages);
 
                         var messageBody = Encoding.UTF8.GetBytes(message);
+                       
 
                         channel.BasicPublish(exchange: "counter", routingKey: "counter", body: messageBody, basicProperties: null);
                     }

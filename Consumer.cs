@@ -13,6 +13,7 @@ namespace OnlinePhotoCollage
     public class Consumer
     {
         private readonly IMemoryCache _memoryCache;
+        private static string url= "amqps://xsygtdlq:7wIOi4AVRbvfYSbM99ePLZRvabRh_xo3@owl.rmq.cloudamqp.com/xsygtdlq" ;
         ConnectionFactory _factory { get; set; }
         IConnection _connection { get; set; }
         IModel _channel { get; set; }
@@ -26,8 +27,13 @@ namespace OnlinePhotoCollage
         {
             try
             {
-                _factory = new ConnectionFactory() { HostName = "localhost" };
+                
+                //_factory = new ConnectionFactory() { HostName = "localhost" };
+                 _factory= new ConnectionFactory();
+                _factory.Uri = new Uri(url.Replace("amqp://", "amqps://"));
                 _connection = _factory.CreateConnection();
+
+ 
                 _channel = _connection.CreateModel();
 
                 {

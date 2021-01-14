@@ -23,13 +23,13 @@ namespace OnlinePhotoCollage
         public int Resize(String imageName,string message)
         {
             
-            using (Image image = Image.Load(Path.Combine(Directory.GetCurrentDirectory(), @"uploads", imageName)))
+            using (Image image = Image.Load(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", imageName)))
             {
                 image.Mutate(x => x
                      .Resize(image.Width / 2, image.Height / 2));
                      //.Grayscale());
 
-                image.Save(Path.Combine(Directory.GetCurrentDirectory(), @"uploads","OnlinePhotoCollage"+ message+imageName)); // Automatic encoder selected based on extension.
+                image.Save(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot","OnlinePhotoCollage"+ message+imageName)); // Automatic encoder selected based on extension.
             }
             return 0;
         }
@@ -71,7 +71,7 @@ namespace OnlinePhotoCollage
             for (int i=0;i<imagelist.Count;i++)
             {
                  img1= outputImage;
-                 img2 = Image.Load<Rgba32>(Path.Combine(Directory.GetCurrentDirectory(), @"uploads", imagelist[i]));
+                 img2 = Image.Load<Rgba32>(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", imagelist[i]));
               
                  // create output image of the correct dimensions
                  {
@@ -97,7 +97,7 @@ namespace OnlinePhotoCollage
                         }
                  }
              }
-              var outputFile = Path.Combine(Directory.GetCurrentDirectory(), @"uploads","OnlinePhotoCollage"+ message+".png");
+              var outputFile = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot","OnlinePhotoCollage"+ message+".png");
              outputImage.Save(outputFile);
              return outputFile;
         }
