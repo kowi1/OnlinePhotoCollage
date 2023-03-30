@@ -17,4 +17,5 @@ These are the languages, frameworks, libraries, and tools used for this project:
 https://online-photo-collage.herokuapp.com/
 
 On Rabbit MQ,
-Create an exchange
+Create an Exchange,a Queue with Routing Key on RabbitMQ
+Parameters should be updated in the appsetings.Development.json file
