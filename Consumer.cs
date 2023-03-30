@@ -7,29 +7,33 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlinePhotoCollage
 {
     public class Consumer
     {
         private readonly IMemoryCache _memoryCache;
-        private static string url= "amqps" ;
+        private readonly IConfiguration _config;
+        private static string url = "amqps" ;
         ConnectionFactory _factory { get; set; }
         IConnection _connection { get; set; }
         IModel _channel { get; set; }
 
-        public Consumer(IMemoryCache memoryCache)
+        public Consumer(IMemoryCache memoryCache,IConfiguration config)
         {
             _memoryCache = memoryCache;
+            _config = config;
         }
 
         public void ReceiveMessageFromQ()
         {
             try
             {
-                
+
                 //_factory = new ConnectionFactory() { HostName = "localhost" };
-                 _factory= new ConnectionFactory();
+                url = _config.GetConnectionString("RabbitMQ");
+                _factory = new ConnectionFactory();
                 _factory.Uri = new Uri(url.Replace("amqp://", "amqps://"));
                 _connection = _factory.CreateConnection();
 
@@ -37,7 +41,7 @@ namespace OnlinePhotoCollage
                 _channel = _connection.CreateModel();
 
                 {
-                    _channel.QueueDeclare(queue: "counter",
+                    _channel.QueueDeclare(queue: _config.GetConnectionString("QueueName"),
                                          durable: true,
                                          exclusive: false,
                                          autoDelete: false,
@@ -86,7 +90,7 @@ namespace OnlinePhotoCollage
 
                     };
 
-                    _channel.BasicConsume(queue: "counter",
+                    _channel.BasicConsume(queue: _config.GetConnectionString("QueueName"),
                                          autoAck: false,
                                          consumer: consumer);
                 }

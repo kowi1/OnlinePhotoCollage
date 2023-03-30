@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace OnlinePhotoCollage
 {
@@ -15,10 +16,12 @@ namespace OnlinePhotoCollage
     {
         private int _messageCount = 1;
         private readonly IMemoryCache _memoryCache;
-        private static string url= "amqp" ;
-        public Producer(IMemoryCache memoryCache)
+        private readonly IConfiguration _config;
+        private static string url= "amqps";
+        public Producer(IMemoryCache memoryCache,IConfiguration config)
         {
             _memoryCache = memoryCache;
+            _config = config;
         }
 
         public string PushMessageToQ(List<String> images,int border,int colorRed,int colorGreen,int colorBlue,String orientation)
@@ -27,12 +30,13 @@ namespace OnlinePhotoCollage
             {   var uniqueId=Guid.NewGuid().ToString();
                // var factory = new ConnectionFactory() { HostName = "localhost"};
                 var factory= new ConnectionFactory();
+                url = _config.GetConnectionString("RabbitMQ");
                 factory.Uri = new Uri(url.Replace("amqp://", "amqps://"));
                 using (var connection = factory.CreateConnection())
                 {
                     using (var channel = connection.CreateModel())
                     {
-                        channel.QueueDeclare(queue: "counter",
+                        channel.QueueDeclare(queue: _config.GetConnectionString("QueueName"),
                                      durable: true,
                                      exclusive: false,
                                      autoDelete: false,
@@ -58,7 +62,7 @@ namespace OnlinePhotoCollage
                         var messageBody = Encoding.UTF8.GetBytes(message);
                        
 
-                        channel.BasicPublish(exchange: "counter", routingKey: "counter", body: messageBody, basicProperties: null);
+                        channel.BasicPublish(exchange: _config.GetConnectionString("ExchangeName"), routingKey: _config.GetConnectionString("RoutingKey"), body: messageBody, basicProperties: null);
                     }
                 }
 

@@ -15,3 +15,6 @@ These are the languages, frameworks, libraries, and tools used for this project:
     Front-end: Angular 8.2.12.
 
 https://online-photo-collage.herokuapp.com/
+
+On Rabbit MQ,
+Create an exchange
