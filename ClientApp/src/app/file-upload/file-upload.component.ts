@@ -15,7 +15,15 @@ export class FileUploadComponent  {
   form: FormGroup;
   public baseUrls:string;
   size:number;
-  uniqueid:string;
+  uniqueid: string;
+  selectedOption: string; // This variable will store the selected radio button value
+
+  // Define an array of radio button options
+  radioOptions = [
+    { label: 'Horizontal', value: 'horizontal' },
+    { label: 'Vertical', value: 'vertical' }
+    
+  ];
   
 
   constructor(
@@ -25,14 +33,18 @@ export class FileUploadComponent  {
   ) {
     this.form = this.fb.group({
       border: 1,
-      colorRed: 2,
-      colorGreen: 2,
-      colorBlue: 3,
+      bg_color: [''],
+  
       orientation: ['']
     })
     this.baseUrls=baseUrl
   }
 
+  // Function to handle radio button change
+  onRadioChange(option: string) {
+    this.selectedOption = option;
+    console.log('Selected option:', this.selectedOption);
+  }
 
   uploadFile(event) {
     this.size=(event.target as HTMLInputElement).files.length;
@@ -49,13 +61,25 @@ export class FileUploadComponent  {
 
   submitForm() {
     var formData: any = new FormData();
+    var hex = this.form.get('bg_color').value;
+
     
+  
+    hex = hex.replace('#', '');
+
+    // Convert the hex values to decimal
+    const red = parseInt(hex.substr(0, 2), 16);
+    const green = parseInt(hex.substr(2, 2), 16);
+    const blue = parseInt(hex.substr(4, 2), 16);
+
+   
+
     formData.append("border", this.form.get('border').value);
-    formData.append("colorRed", this.form.get('colorRed').value);
-    formData.append("colorGreen", this.form.get('colorGreen').value);
-    formData.append("colorBlue", this.form.get('colorBlue').value);
-    formData.append("orientation", this.form.get('orientation').value);
-   // formData.append("coursefile", this.form.get('coursefile').value);
+    formData.append("colorRed", red);
+    formData.append("colorGreen", green);
+    formData.append("colorBlue", blue);
+    formData.append("orientation", this.selectedOption)
+   
     for (let i = 0; i < this.size; i++) {
       formData.append('newControl'+String(i), this.form.get('newControl'+String(i)).value);
     }
